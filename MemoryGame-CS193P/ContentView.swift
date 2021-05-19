@@ -8,46 +8,71 @@
 import SwiftUI
 
 struct ContentView: View {
-    var emojis = ["💻", "💾", "💿", "📽", "🎞", "🕹", "📼", "📱", "🎚", "📺", "📡", "🔫", "🔌", "💡", "📞", "🎙", "☎️", "🔦", "💣", "🧲", "🔭", "🔬", "🪓", "🔪", "🔩"]
-    @State var cardCount = 5
+    
+    var vehicleTheme = ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚛", "🚜", "🏍", "🛺", "🚠", "🚃", "🚂", "🚀", "🚁", "🛶", "⛵️", "🚤", "🚲", "🛵"]
+    var fruitTheme = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥝"]
+    var animalTheme = ["🐶", "🦊", "🐻", "🐼", "🐨", "🐯", "🐮", "🐷"]
+    
+    @State var emojis: [String] = ["P", "I", "C", "K", "🚀", "🍏", "🐻", "A", "M", "O", "D", "E"]
+    @State var numberOfCards = 12
     
     var body: some View {
         VStack{
+            Text("Memoji")
+                .font(.title)
+                .fontWeight(.light)
+                .foregroundColor(.primary)
+                .padding(.top)
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
-                    ForEach(emojis[0..<cardCount], id: \.self) { emoji in
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: bestCardWidthFor(numberOfCards: numberOfCards)))]) {
+                    ForEach(emojis[0..<emojis.count], id: \.self) { emoji in
                         CardView(content: emoji)
                             .aspectRatio(2/3, contentMode: .fit)
                     }
                 }
-                .padding([.top, .leading, .trailing])
-            }.padding(0)
+                .padding(.horizontal)
+            }
             .foregroundColor(.green)
             Spacer()
-            HStack {
-                removeCardButton
+            HStack(alignment: .bottom, spacing: 10) {
                 Spacer()
-                addCardButton
+                themeButton(name: "Vehicles", systemImage: "car", theme: vehicleTheme)
+                Spacer()
+                themeButton(name: "Fruit", systemImage: "leaf", theme: fruitTheme)
+                Spacer()
+                themeButton(name: "Animals", systemImage: "hare", theme: animalTheme)
+                Spacer()
             }
             .font(.title)
             .padding(.horizontal)
         }
-        .padding(.horizontal, 1)
     }
     
-    var addCardButton: some View {
-        Button {
-            if cardCount < emojis.count { cardCount += 1 }
-        } label: {
-            Image(systemName: "plus.circle")
-        }
+    @ViewBuilder func themeButton(name: String, systemImage: String, theme: [String]) -> some View {
+        let numberOfCards = Int.random(in: 4..<theme.count)
+        Button(action: {
+            self.numberOfCards = numberOfCards
+            let randomSelectionFromTheme = theme.shuffled().prefix(numberOfCards)
+            self.emojis = Array(randomSelectionFromTheme)
+        }, label: {
+            VStack {
+                Image(systemName: systemImage)
+                Text(name).font(.caption)
+            }
+        })
     }
     
-    var removeCardButton: some View {
-        Button {
-            if cardCount > 1 { cardCount -= 1 }
-        } label: {
-            Image(systemName: "minus.circle")
+    func bestCardWidthFor(numberOfCards: Int) -> CGFloat {
+        if numberOfCards <= 4 {
+            return 125
+        } else if numberOfCards <= 8 {
+            return 100
+        } else if numberOfCards <= 12 {
+            return 75
+        } else if numberOfCards <= 24 {
+            return 55
+        } else {
+            return 50
         }
     }
 }
