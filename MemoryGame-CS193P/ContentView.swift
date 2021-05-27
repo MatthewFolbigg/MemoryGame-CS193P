@@ -8,13 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    var vehicleTheme = ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚛", "🚜", "🏍", "🛺", "🚠", "🚃", "🚂", "🚀", "🚁", "🛶", "⛵️", "🚤", "🚲", "🛵"]
-    var fruitTheme = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥝"]
-    var animalTheme = ["🐶", "🦊", "🐻", "🐼", "🐨", "🐯", "🐮", "🐷"]
-    
-    @State var emojis: [String] = ["P", "I", "C", "K", "🚀", "🍏", "🐻", "A", "M", "O", "D", "E"]
-    @State var numberOfCards = 12
+    @ObservedObject var gameViewModel: EmojiMemoryGame
     
     var body: some View {
         VStack{
@@ -24,43 +18,34 @@ struct ContentView: View {
                 .foregroundColor(.primary)
                 .padding(.top)
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: bestCardWidthFor(numberOfCards: numberOfCards)))]) {
-                    ForEach(emojis[0..<emojis.count], id: \.self) { emoji in
-                        CardView(content: emoji)
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: bestCardWidthFor(numberOfCards: gameViewModel.cards.count)))]) {
+                    ForEach(gameViewModel.cards) { card in
+                        CardView(card: card)
                             .aspectRatio(2/3, contentMode: .fit)
+                            .onTapGesture {
+                                gameViewModel.choose(card)
+                            }
                     }
                 }
                 .padding(.horizontal)
             }
             .foregroundColor(.green)
-            Spacer()
-            HStack(alignment: .bottom, spacing: 10) {
-                Spacer()
-                themeButton(name: "Vehicles", systemImage: "car", theme: vehicleTheme)
-                Spacer()
-                themeButton(name: "Fruit", systemImage: "leaf", theme: fruitTheme)
-                Spacer()
-                themeButton(name: "Animals", systemImage: "hare", theme: animalTheme)
-                Spacer()
-            }
-            .font(.title)
-            .padding(.horizontal)
         }
     }
     
-    @ViewBuilder func themeButton(name: String, systemImage: String, theme: [String]) -> some View {
-        let numberOfCards = Int.random(in: 4..<theme.count)
-        Button(action: {
-            self.numberOfCards = numberOfCards
-            let randomSelectionFromTheme = theme.shuffled().prefix(numberOfCards)
-            self.emojis = Array(randomSelectionFromTheme)
-        }, label: {
-            VStack {
-                Image(systemName: systemImage)
-                Text(name).font(.caption)
-            }
-        })
-    }
+//    @ViewBuilder func themeButton(name: String, systemImage: String, theme: [String]) -> some View {
+//        let numberOfCards = Int.random(in: 4..<theme.count)
+//        Button(action: {
+//            self.numberOfCards = numberOfCards
+//            let randomSelectionFromTheme = theme.shuffled().prefix(numberOfCards)
+//            self.emojis = Array(randomSelectionFromTheme)
+//        }, label: {
+//            VStack {
+//                Image(systemName: systemImage)
+//                Text(name).font(.caption)
+//            }
+//        })
+//    }
     
     func bestCardWidthFor(numberOfCards: Int) -> CGFloat {
         if numberOfCards <= 4 {
@@ -78,23 +63,20 @@ struct ContentView: View {
 }
 
 struct CardView: View {
-    var content: String
-    @State var isFaceUp: Bool = true
-    
+    let card: MemoryGame<String>.Card
     var body: some View {
         ZStack() {
             let cardShape = RoundedRectangle(cornerRadius: 15, style: .continuous)
-            if isFaceUp {
+            if card.isFaceUp {
                 cardShape.fill().foregroundColor(.white)
                 cardShape.strokeBorder(lineWidth: 3)
-                Text(content)
+                Text(card.content)
                     .font(.largeTitle)
+            } else if card.isMatched {
+                cardShape.opacity(0.2)
             } else {
                 cardShape.fill()
             }
-        }
-        .onTapGesture {
-            isFaceUp = !isFaceUp
         }
     }
 }
@@ -110,10 +92,11 @@ struct CardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let game = EmojiMemoryGame()
+        ContentView(gameViewModel: game)
             .preferredColorScheme(.light)
             .previewDevice("iPhone 12 mini")
-        ContentView()
+        ContentView(gameViewModel: game)
             .preferredColorScheme(.dark)
             .previewDevice("iPhone 12 mini")
     }
