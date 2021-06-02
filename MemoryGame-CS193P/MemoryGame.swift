@@ -13,24 +13,34 @@ struct MemoryGame<CardContent: Equatable> {
     
     private var indexOfTheOnlyFaceUpCard: Int?
     
+    private(set) var score: Int = 0
+    
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
            !cards[chosenIndex].isFaceUp,
            !cards[chosenIndex].isMatched
         {
             if let faceUpIndex = indexOfTheOnlyFaceUpCard {
+                //Checks for match
                 if cards[faceUpIndex].content == cards[chosenIndex].content {
                     cards[faceUpIndex].isMatched = true
                     cards[chosenIndex].isMatched = true
+                    score += 2
+                } else {
+                    if cards[chosenIndex].hasBeenSeen { score -= 1 }
+                    if cards[chosenIndex].hasBeenSeen { score -= 1 }
                 }
                 indexOfTheOnlyFaceUpCard = nil
             } else {
+                //Card is the first of 2 to be turned over
                 for index in cards.indices {
                     cards[index].isFaceUp = false
                 }
                 indexOfTheOnlyFaceUpCard = chosenIndex
             }
             cards[chosenIndex].isFaceUp.toggle()
+            cards[chosenIndex].hasBeenSeen = true
+            print("\(score) of a possible \(cards.count)")
         }
     }
     
@@ -43,6 +53,7 @@ struct MemoryGame<CardContent: Equatable> {
             cards.append(Card(id: id1, content: content))
             cards.append(Card(id: id2, content: content))
         }
+        cards.shuffle()
     }
     
     struct Card: Identifiable {
@@ -50,5 +61,6 @@ struct MemoryGame<CardContent: Equatable> {
         var isFaceUp: Bool = false
         var isMatched: Bool = false
         var content: CardContent
+        var hasBeenSeen: Bool = false
     }
 }

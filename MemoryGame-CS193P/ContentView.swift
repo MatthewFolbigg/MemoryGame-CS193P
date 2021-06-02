@@ -12,11 +12,17 @@ struct ContentView: View {
     
     var body: some View {
         VStack{
-            Text("Memoji")
-                .font(.title)
-                .fontWeight(.light)
-                .foregroundColor(.primary)
-                .padding(.top)
+            HStack{
+                Text("\(gameViewModel.theme.emoji[0]) \(gameViewModel.theme.name)")
+                    .fontWeight(.bold)
+                    .font(.title)
+                    .foregroundColor(gameViewModel.colour)
+                Spacer()
+                Text("Score: \(gameViewModel.score)")
+                    .font(.title2)
+            }
+            .padding(.top)
+            .padding(.horizontal)
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: bestCardWidthFor(numberOfCards: gameViewModel.cards.count)))]) {
                     ForEach(gameViewModel.cards) { card in
@@ -29,7 +35,13 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
             }
-            .foregroundColor(.green)
+            .foregroundColor(gameViewModel.colour)
+            Button(action: {
+                gameViewModel.newGame()
+            }, label: {
+                Image(systemName: "arrow.counterclockwise.circle")
+                Text("New Game")
+            })
         }
     }
     
