@@ -8,6 +8,7 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
+    typealias Card = MemoryGame<String>.Card
         
     private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
         let randomEmoji = theme.emoji.shuffled()
@@ -24,7 +25,7 @@ class EmojiMemoryGame: ObservableObject {
     
     var theme: Theme
     
-    var cards: [MemoryGame<String>.Card] {
+    var cards: [Card] {
         model.cards
     }
     
@@ -51,7 +52,7 @@ class EmojiMemoryGame: ObservableObject {
     
     //MARK: - Intents
     
-    func choose(_ card: MemoryGame<String>.Card) {
+    func choose(_ card: Card) {
         //objectWillChange.send() //@Published mark on the model var calls this automatically
         model.choose(card)
     }

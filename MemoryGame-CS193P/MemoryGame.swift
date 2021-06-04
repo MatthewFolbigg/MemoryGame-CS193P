@@ -10,11 +10,13 @@ import Foundation
 struct MemoryGame<CardContent: Equatable> {
     
     private(set) var cards: [Card]
-    
-    private var indexOfTheOnlyFaceUpCard: Int?
-    
     private(set) var score: Int = 0
     
+    private var indexOfTheOnlyFaceUpCard: Int? {
+        get { cards.indices.filter({ cards[$0].isFaceUp }).oneAndOnly }
+        set { cards.indices.forEach { cards[$0].isFaceUp = ($0 == newValue) } }
+    }
+        
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
            !cards[chosenIndex].isFaceUp,
@@ -30,15 +32,11 @@ struct MemoryGame<CardContent: Equatable> {
                     if cards[chosenIndex].hasBeenSeen { score -= 1 }
                     if cards[chosenIndex].hasBeenSeen { score -= 1 }
                 }
-                indexOfTheOnlyFaceUpCard = nil
+                cards[chosenIndex].isFaceUp = true
             } else {
                 //Card is the first of 2 to be turned over
-                for index in cards.indices {
-                    cards[index].isFaceUp = false
-                }
                 indexOfTheOnlyFaceUpCard = chosenIndex
             }
-            cards[chosenIndex].isFaceUp.toggle()
             cards[chosenIndex].hasBeenSeen = true
             print("\(score) of a possible \(cards.count)")
         }
@@ -57,10 +55,20 @@ struct MemoryGame<CardContent: Equatable> {
     }
     
     struct Card: Identifiable {
-        var id: Int
-        var isFaceUp: Bool = false
-        var isMatched: Bool = false
-        var content: CardContent
-        var hasBeenSeen: Bool = false
+        let id: Int
+        let content: CardContent
+        var isFaceUp = false
+        var isMatched = false
+        var hasBeenSeen = false
+    }
+}
+
+extension Array {
+    var oneAndOnly: Element? {
+        if count == 1 {
+            return first
+        } else {
+            return nil
+        }
     }
 }
