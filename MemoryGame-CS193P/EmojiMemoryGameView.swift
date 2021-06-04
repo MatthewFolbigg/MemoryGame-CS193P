@@ -23,19 +23,16 @@ struct EmojiMemoryGameView: View {
             }
             .padding(.top)
             .padding(.horizontal)
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: bestCardWidthFor(numberOfCards: game.cards.count)))]) {
-                    ForEach(game.cards) { card in
-                        CardView(card: card)
-                            .aspectRatio(2/3, contentMode: .fit)
-                            .onTapGesture {
-                                game.choose(card)
-                            }
+            //MARK: -
+            AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
+                CardView(card: card)
+                    .onTapGesture {
+                        game.choose(card)
                     }
-                }
-                .padding(.horizontal)
             }
             .foregroundColor(game.colour)
+            .padding(.horizontal)
+            //MARK: -
             Button(action: {
                 game.newGame()
             }, label: {
@@ -44,20 +41,7 @@ struct EmojiMemoryGameView: View {
             })
         }
     }
-        
-    func bestCardWidthFor(numberOfCards: Int) -> CGFloat {
-        if numberOfCards <= 4 {
-            return 125
-        } else if numberOfCards <= 8 {
-            return 100
-        } else if numberOfCards <= 12 {
-            return 75
-        } else if numberOfCards <= 24 {
-            return 55
-        } else {
-            return 50
-        }
-    }
+            
 }
 
 
@@ -74,11 +58,12 @@ struct EmojiMemoryGameView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
-        EmojiMemoryGameView(game: game)
+        game.choose(game.cards.first!)
+        return EmojiMemoryGameView(game: game)
             .preferredColorScheme(.light)
             .previewDevice("iPhone 12 mini")
-        EmojiMemoryGameView(game: game)
-            .preferredColorScheme(.dark)
-            .previewDevice("iPhone 12 mini")
+//        EmojiMemoryGameView(game: game)
+//            .preferredColorScheme(.dark)
+//            .previewDevice("iPhone 12 mini")
     }
 }

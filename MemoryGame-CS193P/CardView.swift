@@ -18,6 +18,9 @@ struct CardView: View {
                 if card.isFaceUp {
                     cardShape.fill().foregroundColor(.white)
                     cardShape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                    Pie(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: 120-90))
+                        .padding(DrawingConstants.timerPadding)
+                        .opacity(DrawingConstants.timerOpacity)
                     Text(card.content)
                         .font(font(scaledTo: geometry.size))
                 } else if card.isMatched {
@@ -27,8 +30,6 @@ struct CardView: View {
                 }
             }
         }
-        
-        
     }
     
     private func font(scaledTo size: CGSize) -> Font {
@@ -38,8 +39,10 @@ struct CardView: View {
     private struct DrawingConstants {
         static let cornerRadius: CGFloat = 10
         static let lineWidth: CGFloat = 3
-        static let fontScale: CGFloat = 0.65
-        static let matchedOpacity = 0.2
+        static let fontScale: CGFloat = 0.55
+        static let matchedOpacity: Double = 0.2
+        static let timerOpacity: Double = 0.3
+        static let timerPadding: CGFloat = 6
     }
 
 }
