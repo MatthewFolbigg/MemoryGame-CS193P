@@ -43,6 +43,8 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
     }
     
     private func itemWidthToFit(itemCount: Int, in size: CGSize, aspectRatio: CGFloat) -> CGFloat {
+        // This function is not my own. It was provided in the CS193P lecture and all crdit goes to the CS193P team.
+        // I have modified its name but appart from that it is the same as the one provided
         var columnCount = 1
         var rowCount = items.count
         repeat {
