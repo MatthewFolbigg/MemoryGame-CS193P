@@ -25,11 +25,17 @@ struct EmojiMemoryGameView: View {
             .padding(.horizontal)
             //MARK: -
             AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
-                CardView(card: card)
-                    .onTapGesture {
-                        game.choose(card)
-                    }
+                if card.isMatched && !card.isFaceUp {
+                    EmojiCardView(card: card)
+                        .opacity(0.1)
+                } else {
+                    EmojiCardView(card: card)
+                        .onTapGesture {
+                            game.choose(card)
+                        }
+                }
             }
+            
             .foregroundColor(game.colour)
             .padding(.horizontal)
             //MARK: -
