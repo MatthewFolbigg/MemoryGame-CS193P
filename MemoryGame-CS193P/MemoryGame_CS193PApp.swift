@@ -9,12 +9,12 @@ import SwiftUI
 
 @main
 struct MemoryGame_CS193PApp: App {
+            
+    let themeChooser = ThemeChooser()
     
-    let game = EmojiMemoryGame()
-        
     var body: some Scene {
         WindowGroup {
-            EmojiMemoryGameView(game: game)
+            ThemeChooserView(themeChooser: themeChooser)
         }
     }
 }

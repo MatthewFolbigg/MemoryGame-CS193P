@@ -11,11 +11,11 @@ class EmojiMemoryGame: ObservableObject {
     typealias Card = MemoryGame<String>.Card
         
     private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
-        let randomEmoji = theme.emoji.shuffled()
         let numberOfPairs = min(theme.numberOfPairs, theme.emoji.count)
-        let memoryGame = MemoryGame<String>(numberOfCardPairs: numberOfPairs) { pairIndex in
-            return randomEmoji[pairIndex]
+        var memoryGame = MemoryGame<String>(numberOfCardPairs: numberOfPairs) { pairIndex in
+            return theme.emoji[pairIndex]
         }
+        memoryGame.shuffle()
         return memoryGame
     }
         
@@ -23,7 +23,7 @@ class EmojiMemoryGame: ObservableObject {
     
     @Published private var model: MemoryGame<String>
     
-    var theme: Theme
+    var theme: Theme 
     
     var cards: [Card] {
         model.cards
@@ -45,6 +45,7 @@ class EmojiMemoryGame: ObservableObject {
         }
     }
     
+    //MARK:- This is currently duplcated in ThemeChooser. Remove One?
     var colour: Color {
         switch theme.colour {
         case "red" : return Color.red
@@ -57,8 +58,8 @@ class EmojiMemoryGame: ObservableObject {
         }
     }
     
-    init() {
-        self.theme = emojiThemes.allThemes.randomElement()!
+    init(theme: Theme) {
+        self.theme = theme
         self.model = EmojiMemoryGame.createMemoryGame(theme: self.theme)
     }
     
@@ -70,7 +71,6 @@ class EmojiMemoryGame: ObservableObject {
     }
     
     func newGame() {
-        self.theme = emojiThemes.allThemes.randomElement()!
         self.model = EmojiMemoryGame.createMemoryGame(theme: self.theme)
     }
     

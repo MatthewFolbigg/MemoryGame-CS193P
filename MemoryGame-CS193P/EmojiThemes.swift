@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct emojiThemes {
+struct EmojiThemes {
     static let allThemes: [Theme] = [fruit, vehicle, animal, nature, sport, object]
     
     static let fruit = Theme(
@@ -50,7 +50,8 @@ struct emojiThemes {
     
 }
 
-struct Theme {
+struct Theme: Equatable, Identifiable, Codable {
+    let id: UUID
     let name: String
     let emoji: [String]
     let numberOfPairs: Int
@@ -61,6 +62,7 @@ struct Theme {
         self.emoji = emoji
         self.numberOfPairs = emoji.count
         self.colour = colour
+        self.id = UUID()
     }
     
     init(name: String, emoji: [String], numberOfPairs: Int, colour: String) {
@@ -68,6 +70,7 @@ struct Theme {
         self.emoji = emoji
         self.numberOfPairs = numberOfPairs
         self.colour = colour
+        self.id = UUID()
     }
     
 }

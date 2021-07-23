@@ -19,11 +19,14 @@ struct EmojiMemoryGameView: View {
                     winMessage
                 } else {
                     gameBody
-                    deckBody
-                    bottomBar
+                    VStack {
+                        deckBody
+                        bottomBar
+                    }
                 }
             }
         }
+        .navigationTitle("\(game.theme.emoji[0]) \(game.theme.name)")
     }
     
     private func dealCards() {
@@ -110,16 +113,11 @@ struct EmojiMemoryGameView: View {
     
     //MARK: - Top Bar
     var topBar: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text("\(game.theme.emoji[0]) \(game.theme.name)")
-                .fontWeight(Font.Weight.bold)
-                .font(.title)
-                .foregroundColor(game.colour)
-            Spacer()
+        HStack {
             Text("Score: \(game.score)")
                 .font(.title2)
+            Spacer()
         }
-        .padding(.top)
         .padding(.horizontal)
     }
     
@@ -182,7 +180,7 @@ struct EmojiMemoryGameView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let game = EmojiMemoryGame()
+        let game = EmojiMemoryGame(theme: EmojiThemes.animal)
         game.choose(game.cards.first!)
         return EmojiMemoryGameView(game: game)
             .preferredColorScheme(.light)
