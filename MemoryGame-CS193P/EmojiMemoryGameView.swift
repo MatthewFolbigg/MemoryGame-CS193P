@@ -15,10 +15,14 @@ struct EmojiMemoryGameView: View {
         VStack{
             topBar
             ZStack(alignment: .bottom) {
-                gameBody
-                deckBody
+                if game.isWon {
+                    winMessage
+                } else {
+                    gameBody
+                    deckBody
+                    bottomBar
+                }
             }
-            bottomBar
         }
     }
     
@@ -51,6 +55,21 @@ struct EmojiMemoryGameView: View {
     
     private func zIndex(for card: EmojiMemoryGame.Card) -> Double {
         -Double(game.cards.firstIndex(where: { $0.id == card.id }) ?? 0)
+    }
+    
+    var winMessage: some View {
+        VStack {
+            Spacer()
+            Text("You Win!")
+                .font(.title)
+                .fontWeight(.semibold)
+            Text("Scoring \(game.score) of a possible \(game.maxScore).")
+                .font(.title3)
+                .fontWeight(.light)
+            Spacer()
+            newGameButton
+            Spacer()
+        }
     }
     
     var gameBody: some View {

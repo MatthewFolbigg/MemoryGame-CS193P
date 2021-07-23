@@ -12,6 +12,13 @@ struct MemoryGame<CardContent: Equatable> {
     private(set) var cards: [Card]
     private(set) var score: Int = 0
     
+    enum GameState {
+        case playing
+        case won
+    }
+    
+    private(set) var gameState: GameState = .playing
+    
     private var indexOfTheOnlyFaceUpCard: Int? {
         get { cards.indices.filter({ cards[$0].isFaceUp }).oneAndOnly }
         set { cards.indices.forEach { cards[$0].isFaceUp = ($0 == newValue) } }
@@ -33,6 +40,12 @@ struct MemoryGame<CardContent: Equatable> {
                     if cards[chosenIndex].hasBeenSeen { score -= 1 }
                 }
                 cards[chosenIndex].isFaceUp = true
+                if (cards.indices.filter({ !cards[$0].isMatched }).count == 0) {
+                    print("Win")
+                    gameState = .won
+                } else {
+                    print("Keep going")
+                }
             } else {
                 //Card is the first of 2 to be turned over
                 indexOfTheOnlyFaceUpCard = chosenIndex

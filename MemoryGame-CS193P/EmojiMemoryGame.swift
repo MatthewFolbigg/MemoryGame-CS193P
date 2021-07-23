@@ -33,6 +33,18 @@ class EmojiMemoryGame: ObservableObject {
         model.score
     }
     
+    var maxScore: Int {
+        cards.count
+    }
+    
+    var isWon: Bool {
+        if model.gameState == .won {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     var colour: Color {
         switch theme.colour {
         case "red" : return Color.red
