@@ -69,8 +69,13 @@ struct EmojiMemoryGameView: View {
             Text("Scoring \(game.score) of a possible \(game.maxScore).")
                 .font(.title3)
                 .fontWeight(.light)
-            Spacer()
             newGameButton
+                .frame(width: 160, height: 40, alignment: .center)
+                .background(game.colour)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .padding(.vertical)
+            Spacer()
             Spacer()
         }
     }
@@ -123,23 +128,24 @@ struct EmojiMemoryGameView: View {
     
     //MARK: - Bottom Bar
     var bottomBar: some View {
-        HStack {
-            newGameButton
-            Spacer()
+        VStack {
             shuffleButton
+                .padding(/*@START_MENU_TOKEN@*/.vertical, 4.0/*@END_MENU_TOKEN@*/)
+            newGameButton
+                .foregroundColor(game.colour)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 0.0)
     }
     
     var newGameButton: some View {
         Button(action: {
-            withAnimation { //FIXME: Glitchy when game theme changes in newGame at same time as un-deal. newGame animated title change is glitchy due to font animation
+            withAnimation {
                 dealtCardIds = []
                 game.newGame()
             }
         }, label: {
             Image(systemName: "arrow.counterclockwise.circle")
-            Text("New Game")
+            Text("Restart")
         })
     }
     
@@ -152,6 +158,10 @@ struct EmojiMemoryGameView: View {
             Image(systemName: "shuffle.circle")
             Text("Shuffle")
         })
+        .frame(width: 160, height: 40, alignment: .center)
+        .background(game.colour)
+        .foregroundColor(.white)
+        .cornerRadius(10)
     }
     
     //MARK: - Constants
