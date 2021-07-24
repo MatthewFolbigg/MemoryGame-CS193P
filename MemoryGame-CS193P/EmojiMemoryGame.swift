@@ -38,7 +38,8 @@ class EmojiMemoryGame: ObservableObject {
     }
     
     var isWon: Bool {
-        if model.gameState == .won {
+        print(self.model.gameState)
+        if model.gameState == .finished {
             return true
         } else {
             return false

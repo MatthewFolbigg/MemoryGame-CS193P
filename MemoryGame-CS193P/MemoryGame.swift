@@ -13,11 +13,12 @@ struct MemoryGame<CardContent: Equatable> {
     private(set) var score: Int = 0
     
     enum GameState {
-        case playing
-        case won
+        case inProgress
+        case finished
+        case pendingDeal
     }
     
-    private(set) var gameState: GameState = .playing
+    var gameState: GameState = .pendingDeal
     
     private var indexOfTheOnlyFaceUpCard: Int? {
         get { cards.indices.filter({ cards[$0].isFaceUp }).oneAndOnly }
@@ -25,6 +26,7 @@ struct MemoryGame<CardContent: Equatable> {
     }
         
     mutating func choose(_ card: Card) {
+        gameState = .inProgress
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }),
            !cards[chosenIndex].isFaceUp,
            !cards[chosenIndex].isMatched
@@ -42,7 +44,7 @@ struct MemoryGame<CardContent: Equatable> {
                 cards[chosenIndex].isFaceUp = true
                 if (cards.indices.filter({ !cards[$0].isMatched }).count == 0) {
                     print("Win")
-                    gameState = .won
+                    gameState = .finished
                 } else {
                     print("Keep going")
                 }

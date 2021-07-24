@@ -10,7 +10,7 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     @ObservedObject var game: EmojiMemoryGame
     @Namespace private var dealingNameSpace
-    
+        
     var body: some View {
         VStack{
             topBar
