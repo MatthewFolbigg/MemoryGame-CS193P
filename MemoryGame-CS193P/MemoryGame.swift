@@ -43,10 +43,7 @@ struct MemoryGame<CardContent: Equatable> {
                 }
                 cards[chosenIndex].isFaceUp = true
                 if (cards.indices.filter({ !cards[$0].isMatched }).count == 0) {
-                    print("Win")
                     gameState = .finished
-                } else {
-                    print("Keep going")
                 }
             } else {
                 //Card is the first of 2 to be turned over

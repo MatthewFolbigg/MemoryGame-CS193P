@@ -10,11 +10,11 @@ import SwiftUI
 @main
 struct MemoryGame_CS193PApp: App {
             
-    let themeChooser = ThemeChooser()
+    let themeStore = ThemeStore(named: "Default")
     
     var body: some Scene {
         WindowGroup {
-            ThemeChooserView(themeChooser: themeChooser)
+            ThemeChooserView(themeStore: themeStore)
         }
     }
 }

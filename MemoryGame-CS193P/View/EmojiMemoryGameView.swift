@@ -201,7 +201,7 @@ struct EmojiMemoryGameView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let game = EmojiMemoryGame(theme: EmojiThemes.animal)
+        let game = EmojiMemoryGame(theme: DefaultThemes.animal)
         game.choose(game.cards.first!)
         return EmojiMemoryGameView(game: game)
             .preferredColorScheme(.light)

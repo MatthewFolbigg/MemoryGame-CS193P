@@ -12,8 +12,9 @@ class EmojiMemoryGame: ObservableObject {
         
     private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
         let numberOfPairs = min(theme.numberOfPairs, theme.emoji.count)
+        let shuffledEmoji = theme.emoji.shuffled()
         var memoryGame = MemoryGame<String>(numberOfCardPairs: numberOfPairs) { pairIndex in
-            return theme.emoji[pairIndex]
+            return shuffledEmoji[pairIndex]
         }
         memoryGame.shuffle()
         return memoryGame
@@ -45,17 +46,8 @@ class EmojiMemoryGame: ObservableObject {
         model.gameState == .pendingDeal ? true : false
     }
     
-    //MARK:- This is currently duplcated in ThemeChooser. Remove One?
     var colour: Color {
-        switch theme.colour {
-        case "red" : return Color.red
-        case "blue" : return Color.blue
-        case "orange" : return Color.orange
-        case "green" : return Color.green
-        case "yellow" : return Color.yellow
-        case "purple" : return Color.purple
-        default: return Color.green
-        }
+        return theme.color
     }
     
     init(theme: Theme) {
