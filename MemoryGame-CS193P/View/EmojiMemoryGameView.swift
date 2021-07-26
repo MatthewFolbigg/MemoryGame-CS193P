@@ -10,20 +10,24 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     @ObservedObject var game: EmojiMemoryGame
     @Namespace private var dealingNameSpace
-        
+    
+    var gameHasStarted: Bool {
+        if game.isPendingDeal && dealtCardIds.count == 0 {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    //MARK: - Body
     var body: some View {
         VStack{
-            topBar
-            ZStack(alignment: .bottom) {
-                if game.isWon {
-                    winMessage
-                } else {
-                    gameBody
-                    VStack {
-                        deckBody
-                        bottomBar
-                    }
-                }
+            if game.isWon {
+                winMessage
+            } else {
+                gameBody
+                bottomBar
+                    .opacity(gameHasStarted ? 1 : 0)
             }
         }
         .navigationTitle("\(game.theme.emoji[0]) \(game.theme.name)")
@@ -60,27 +64,14 @@ struct EmojiMemoryGameView: View {
         -Double(game.cards.firstIndex(where: { $0.id == card.id }) ?? 0)
     }
     
-    var winMessage: some View {
-        VStack {
-            Spacer()
-            Text("You Win!")
-                .font(.title)
-                .fontWeight(.semibold)
-            Text("Scoring \(game.score) of a possible \(game.maxScore).")
-                .font(.title3)
-                .fontWeight(.light)
-            newGameButton
-                .frame(width: 160, height: 40, alignment: .center)
-                .background(game.colour)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                .padding(.vertical)
-            Spacer()
-            Spacer()
+    var gameBody: some View {
+        ZStack {
+            dealtCardsView
+            undealtDeckView
         }
     }
     
-    var gameBody: some View {
+    var dealtCardsView: some View {
         AspectVGrid(items: game.cards, aspectRatio: 2/3) { card in
             if isNotDealt(card: card) || (card.isMatched && !card.isFaceUp) {
                 Color.clear
@@ -100,43 +91,63 @@ struct EmojiMemoryGameView: View {
         .padding(.horizontal)
     }
     
-    var deckBody: some View {
-        ZStack {
-            ForEach(game.cards.filter(isNotDealt)) { card in
-                EmojiCardView(card: card)
-                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
-                    .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .identity))
-                    .zIndex(zIndex(for: card))
+    var undealtDeckView: some View {
+        VStack {
+            ZStack {
+                ForEach(game.cards.filter(isNotDealt)) { card in
+                    EmojiCardView(card: card)
+                        .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                        .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .identity))
+                        .zIndex(zIndex(for: card))
+                }
             }
-        }
-        .frame(width: DrawingConstants.deckWidth, height: DrawingConstants.deckHeight)
-        .foregroundColor(game.colour)
-        .onTapGesture {
-            dealCards()
+            .frame(width: DrawingConstants.deckWidth, height: DrawingConstants.deckHeight)
+            .foregroundColor(game.colour)
+            .onTapGesture {
+                dealCards()
+            }
+            Text("Tap cards to start.")
+                .foregroundColor(.gray)
+                .padding()
+                .opacity(gameHasStarted ? 0 : 1)
         }
     }
     
-    //MARK: - Top Bar
-    var topBar: some View {
-        HStack {
-            Text("Score: \(game.score)")
-                .font(.title2)
+    //MARK: - Win Message
+    var winMessage: some View {
+        VStack {
+            Spacer()
+            Text("You Win!")
+                .font(.title)
+                .fontWeight(.semibold)
+            Text("Scoring \(game.score) of a possible \(game.maxScore).")
+                .font(.title3)
+                .fontWeight(.light)
+            newGameButton
+                .frame(width: 160, height: 40, alignment: .center)
+                .background(game.colour)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .padding(.vertical)
+            Spacer()
             Spacer()
         }
-        .padding(.horizontal)
     }
-    
+        
     //MARK: - Bottom Bar
     var bottomBar: some View {
         VStack {
+            Text("Score: \(game.score)")
             shuffleButton
-                .padding(/*@START_MENU_TOKEN@*/.vertical, 4.0/*@END_MENU_TOKEN@*/)
+                .padding(.vertical, 4.0)
             newGameButton
-                .foregroundColor(game.colour)
+                .foregroundColor(game.isPendingDeal && dealtCardIds.count == 0 ? .gray : game.colour)
         }
         .padding(.horizontal, 0.0)
+        
     }
     
+    //MARK: - Buttons
     var newGameButton: some View {
         Button(action: {
             withAnimation {
@@ -147,6 +158,7 @@ struct EmojiMemoryGameView: View {
             Image(systemName: "arrow.counterclockwise.circle")
             Text("Restart")
         })
+        .disabled(game.isPendingDeal && dealtCardIds.count == 0)
     }
     
     var shuffleButton: some View {
@@ -159,9 +171,10 @@ struct EmojiMemoryGameView: View {
             Text("Shuffle")
         })
         .frame(width: 160, height: 40, alignment: .center)
-        .background(game.colour)
+        .background(game.isPendingDeal && dealtCardIds.count == 0 ? .gray : game.colour)
         .foregroundColor(.white)
         .cornerRadius(10)
+        .disabled(game.isPendingDeal && dealtCardIds.count == 0)
     }
     
     //MARK: - Constants
@@ -172,9 +185,7 @@ struct EmojiMemoryGameView: View {
         static let dealDuration: Double = 0.5
         static let totalDealDuration: Double = 1.5
     }
-
     
-            
 }
 
 

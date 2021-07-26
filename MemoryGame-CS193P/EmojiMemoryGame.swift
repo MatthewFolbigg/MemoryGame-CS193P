@@ -38,12 +38,11 @@ class EmojiMemoryGame: ObservableObject {
     }
     
     var isWon: Bool {
-        print(self.model.gameState)
-        if model.gameState == .finished {
-            return true
-        } else {
-            return false
-        }
+        model.gameState == .finished ? true : false
+    }
+    
+    var isPendingDeal: Bool {
+        model.gameState == .pendingDeal ? true : false
     }
     
     //MARK:- This is currently duplcated in ThemeChooser. Remove One?
