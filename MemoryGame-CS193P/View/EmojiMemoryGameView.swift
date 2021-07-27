@@ -11,15 +11,7 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var game: EmojiMemoryGame
     @Binding var activeGame: EmojiMemoryGame?
     @Namespace private var dealingNameSpace
-    
-    var gameHasStarted: Bool {
-        if game.isPendingDeal && dealtCardIds.count == 0 {
-            return false
-        } else {
-            return true
-        }
-    }
-    
+        
     //MARK: - Body
     var body: some View {
         VStack{
@@ -28,7 +20,7 @@ struct EmojiMemoryGameView: View {
             } else {
                 gameBody
                 bottomBar
-                    .opacity(gameHasStarted ? 1 : 0)
+                    .opacity(game.isPendingDeal ? 0 : 1)
             }
         }
         .navigationTitle("\(game.theme.emoji[0]) \(game.theme.name)")
@@ -48,14 +40,14 @@ struct EmojiMemoryGameView: View {
     }
     
     //MARK: - Game Body
-    @State private var dealtCardIds = Set<Int>()
+    //@State private var dealtCardIds = Set<Int>()
     
     private func deal(card: EmojiMemoryGame.Card) {
-        dealtCardIds.insert(card.id)
+            game.dealtCardIds.insert(card.id)
     }
     
     private func isNotDealt(card: EmojiMemoryGame.Card) -> Bool {
-        !dealtCardIds.contains(card.id)
+        !game.dealtCardIds.contains(card.id)
     }
     
     private func dealAnimation(for card: EmojiMemoryGame.Card) -> Animation {
@@ -66,14 +58,15 @@ struct EmojiMemoryGameView: View {
         return Animation.easeInOut(duration: DrawingConstants.dealDuration).delay(delay)
     }
     
-    private func zIndex(for card: EmojiMemoryGame.Card) -> Double {
-        -Double(game.cards.firstIndex(where: { $0.id == card.id }) ?? 0)
+    private func zIndex(for card: EmojiMemoryGame.Card, modifier: Int = 0) -> Double {
+        let index = -Double((game.cards.firstIndex(where: { $0.id == card.id }) ?? 0) - (modifier))
+        return index
     }
     
     var gameBody: some View {
         ZStack {
-            dealtCardsView
             undealtDeckView
+            dealtCardsView
         }
     }
     
@@ -107,15 +100,16 @@ struct EmojiMemoryGameView: View {
                         .zIndex(zIndex(for: card))
                 }
             }
-            .frame(width: DrawingConstants.deckWidth, height: DrawingConstants.deckHeight)
+            .frame(width: DrawingConstants.deckWidth*2.5, height: DrawingConstants.deckHeight*2.5)
             .foregroundColor(game.colour)
             .onTapGesture {
-                dealCards()
+                withAnimation {
+                    dealCards()
+                }
             }
             Text("Tap cards to start.")
                 .foregroundColor(.gray)
-                .padding()
-                .opacity(gameHasStarted ? 0 : 1)
+                .opacity(game.isPendingDeal ? 1 : 0)
         }
     }
     
@@ -147,7 +141,7 @@ struct EmojiMemoryGameView: View {
             shuffleButton
                 .padding(.vertical, 4.0)
             newGameButton
-                .foregroundColor(game.isPendingDeal && dealtCardIds.count == 0 ? .gray : game.colour)
+                .foregroundColor(game.isPendingDeal && game.dealtCardIds.count == 0 ? .gray : game.colour)
         }
         .padding(.horizontal, 0.0)
         
@@ -157,14 +151,14 @@ struct EmojiMemoryGameView: View {
     var newGameButton: some View {
         Button(action: {
             withAnimation {
-                dealtCardIds = []
+                game.dealtCardIds = []
                 game.newGame()
             }
         }, label: {
             Image(systemName: "arrow.counterclockwise.circle")
             Text("Restart")
         })
-        .disabled(game.isPendingDeal && dealtCardIds.count == 0)
+        .disabled(game.isPendingDeal && game.dealtCardIds.count == 0)
     }
     
     var shuffleButton: some View {
@@ -177,10 +171,10 @@ struct EmojiMemoryGameView: View {
             Text("Shuffle")
         })
         .frame(width: 160, height: 40, alignment: .center)
-        .background(game.isPendingDeal && dealtCardIds.count == 0 ? .gray : game.colour)
+        .background(game.isPendingDeal && game.dealtCardIds.count == 0 ? .gray : game.colour)
         .foregroundColor(.white)
         .cornerRadius(10)
-        .disabled(game.isPendingDeal && dealtCardIds.count == 0)
+        .disabled(game.isPendingDeal && game.dealtCardIds.count == 0)
     }
     
     //MARK: - Constants
@@ -205,15 +199,15 @@ struct EmojiMemoryGameView: View {
 
 
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let game = EmojiMemoryGame(theme: DefaultThemes.animal)
-//        game.choose(game.cards.first!)
-//        return EmojiMemoryGameView(game: game)
-//            .preferredColorScheme(.light)
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        let game = EmojiMemoryGame(theme: DefaultThemes.animal)
+        game.choose(game.cards.first!)
+        return EmojiMemoryGameView(game: game, activeGame: .constant(game))
+            .preferredColorScheme(.light)
+            .previewDevice("iPhone 12 mini")
+//        EmojiMemoryGameView(game: game)
+//            .preferredColorScheme(.dark)
 //            .previewDevice("iPhone 12 mini")
-////        EmojiMemoryGameView(game: game)
-////            .preferredColorScheme(.dark)
-////            .previewDevice("iPhone 12 mini")
-//    }
-//}
+    }
+}

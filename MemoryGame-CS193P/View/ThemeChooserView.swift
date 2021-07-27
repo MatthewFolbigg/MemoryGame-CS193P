@@ -16,18 +16,6 @@ struct ThemeChooserView: View {
     
     @State var ActiveGame: EmojiMemoryGame?
     
-    func game(for theme: Theme) -> EmojiMemoryGame {
-        if let game = ActiveGame {
-            if game.theme == theme {
-                return game
-            } else {
-                return EmojiMemoryGame(theme: theme)
-            }
-        } else {
-            return EmojiMemoryGame(theme: theme)
-        }
-    }
-        
     var body: some View {
         NavigationView {
             List {
@@ -89,10 +77,17 @@ struct ThemeChooserView: View {
         }
     }
     
+    func game(for theme: Theme) -> EmojiMemoryGame {
+        if let game = ActiveGame, game.theme == theme {
+            return game
+        } else {
+            return EmojiMemoryGame(theme: theme)
+        }
+    }
 }
 
-//struct ThemeChooserView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ThemeChooserView(themeStore: ThemeStore(named: "Default"))
-//    }
-//}
+struct ThemeChooserView_Previews: PreviewProvider {
+    static var previews: some View {
+        ThemeChooserView(themeStore: ThemeStore(named: "Default"))
+    }
+}

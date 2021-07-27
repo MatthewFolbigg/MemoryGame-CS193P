@@ -38,6 +38,8 @@ struct EmojiCardView: View {
                     .scaleEffect(scale(thatFits: geometry.size))
             }
             .cardify(isFaceUp: card.isFaceUp)
+            .shadow(radius: 2)
+            .shadow(color: Color(red: 255/255, green: 255/255, blue: 255/255, opacity: 0.1), radius:4)
         }
     }
         

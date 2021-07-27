@@ -23,6 +23,7 @@ class EmojiMemoryGame: ObservableObject {
     //MARK: - Public Variables
     
     @Published private var model: MemoryGame<String>
+    @Published var dealtCardIds = Set<Int>()
     
     var theme: Theme 
     
@@ -43,7 +44,7 @@ class EmojiMemoryGame: ObservableObject {
     }
     
     var isPendingDeal: Bool {
-        model.gameState == .pendingDeal ? true : false
+        model.gameState == .pendingDeal && dealtCardIds.count == 0 ? true : false
     }
     
     var colour: Color {
