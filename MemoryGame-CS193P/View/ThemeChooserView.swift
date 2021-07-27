@@ -14,15 +14,29 @@ struct ThemeChooserView: View {
     @State private var themeToEditIndex: Int = 0
     @State private var themeEditorPopover: Bool = false
     
+    @State var ActiveGame: EmojiMemoryGame?
+    
+    func game(for theme: Theme) -> EmojiMemoryGame {
+        if let game = ActiveGame {
+            if game.theme == theme {
+                return game
+            } else {
+                return EmojiMemoryGame(theme: theme)
+            }
+        } else {
+            return EmojiMemoryGame(theme: theme)
+        }
+    }
+        
     var body: some View {
         NavigationView {
             List {
                 ForEach(themeStore.themes) { theme in
                     NavigationLink(
-                        destination: EmojiMemoryGameView(game: EmojiMemoryGame(theme: theme)),
+                        destination: EmojiMemoryGameView(game: game(for: theme), activeGame: $ActiveGame),
                         label: {
                             HStack {
-                                Image(systemName: "pencil.circle")
+                                Image(systemName: "pencil.circle.fill")
                                     .imageScale(.large)
                                     .opacity(editMode == .active ? 1 : 0)
                                     .foregroundColor(.blue)
@@ -30,6 +44,7 @@ struct ThemeChooserView: View {
                                         themeToEditIndex = themeStore.themes.firstIndex(where:  { $0.id == theme.id }) ?? 0
                                         themeEditorPopover = true
                                     }
+                                    .frame(width: editMode == .active ? 30 : 0, alignment: .leading)
                                 themeView(for: theme)
                             }
                         }
@@ -42,6 +57,11 @@ struct ThemeChooserView: View {
                     themeStore.themes.move(fromOffsets: indices, toOffset: newOffset)
                 }
             }
+            .sheet(isPresented: $themeEditorPopover, onDismiss: {
+                editMode = .inactive
+            }, content: {
+                ThemeEditorView(themeStore: themeStore, isDisplayed: $themeEditorPopover, chosenThemeIdex: $themeToEditIndex)
+            })
             .navigationTitle("Memorise")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -53,9 +73,6 @@ struct ThemeChooserView: View {
                         Image(systemName: "plus")
                     })
                 }
-            }
-            .sheet(isPresented: $themeEditorPopover) {
-                ThemeEditorView(themeStore: themeStore, isDisplayed: $themeEditorPopover, chosenThemeIdex: $themeToEditIndex)
             }
             .environment(\.editMode, $editMode)
         }

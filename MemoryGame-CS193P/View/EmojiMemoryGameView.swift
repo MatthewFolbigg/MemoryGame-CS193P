@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EmojiMemoryGameView: View {
     @ObservedObject var game: EmojiMemoryGame
+    @Binding var activeGame: EmojiMemoryGame?
     @Namespace private var dealingNameSpace
     
     var gameHasStarted: Bool {
@@ -31,6 +32,11 @@ struct EmojiMemoryGameView: View {
             }
         }
         .navigationTitle("\(game.theme.emoji[0]) \(game.theme.name)")
+        .onAppear {
+            print(activeGame?.cards)
+            activeGame = game
+            print(activeGame?.cards)
+        }
     }
     
     private func dealCards() {
@@ -199,15 +205,15 @@ struct EmojiMemoryGameView: View {
 
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = EmojiMemoryGame(theme: DefaultThemes.animal)
-        game.choose(game.cards.first!)
-        return EmojiMemoryGameView(game: game)
-            .preferredColorScheme(.light)
-            .previewDevice("iPhone 12 mini")
-//        EmojiMemoryGameView(game: game)
-//            .preferredColorScheme(.dark)
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let game = EmojiMemoryGame(theme: DefaultThemes.animal)
+//        game.choose(game.cards.first!)
+//        return EmojiMemoryGameView(game: game)
+//            .preferredColorScheme(.light)
 //            .previewDevice("iPhone 12 mini")
-    }
-}
+////        EmojiMemoryGameView(game: game)
+////            .preferredColorScheme(.dark)
+////            .previewDevice("iPhone 12 mini")
+//    }
+//}
