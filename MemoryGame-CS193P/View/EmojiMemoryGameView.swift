@@ -25,9 +25,7 @@ struct EmojiMemoryGameView: View {
         }
         .navigationTitle("\(game.theme.emoji[0]) \(game.theme.name)")
         .onAppear {
-            print(activeGame?.cards)
             activeGame = game
-            print(activeGame?.cards)
         }
     }
     
@@ -78,7 +76,7 @@ struct EmojiMemoryGameView: View {
                 EmojiCardView(card: card)
                     .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
                     .transition(AnyTransition.asymmetric(insertion: .identity, removal: .scale))
-                    .zIndex(zIndex(for: card))
+                    //.zIndex(zIndex(for: card))
                     .onTapGesture {
                         withAnimation {
                             game.choose(card)

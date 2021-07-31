@@ -64,6 +64,7 @@ struct ThemeChooserView: View {
             }
             .environment(\.editMode, $editMode)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     func themeView(for theme: Theme) -> some View {
