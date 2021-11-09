@@ -1,6 +1,5 @@
 # CS193P MemoryGame
-### 🔴 Work In Progress
-MemoryGame is beign built following the 2021 [Stanford CS193P](https://cs193p.sites.stanford.edu) SwiftUI course. It is the first app built during the course starting in lecture 1.
+A memory game from the 2021 [Stanford CS193P](https://cs193p.sites.stanford.edu) SwiftUI course. It is the first app built during the course starting in lecture 1.
 
 #### A simple card based memory game
 - Tap on a card to turn it face up and reveal its content 
